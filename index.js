@@ -1,13 +1,10 @@
 #! /usr/bin/env node
+
 var fs = require('fs');
 var template = require('./src/templates');
 //var toAbsolutePath = require('to-absolute-path');
-
-//var data = fs.readFileSync('package.json', 'utf-8');
-//console.log(data);
-//console.log(process.argv);
 //var pathOrigem = toAbsolutePath('src');
-//console.log(pathOrigem);
+
 var option = process.argv[2];
 var module = process.argv[3];
 
@@ -138,7 +135,7 @@ function createDirectoryComponent(dir){
 }
 
 function init(){
-	var templateShared = template.sharedTemplate;
+    var templateShared = template.sharedTemplate;
     
     fs.mkdirSync("shared");
     fs.mkdirSync("shared/components");
