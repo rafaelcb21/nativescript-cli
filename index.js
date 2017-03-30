@@ -12,6 +12,11 @@ function directory(dir){
 	fs.mkdirSync(dir);
 }
 
+function directoryModule(dir){
+	fs.mkdirSync(dir+".module");
+    fs.mkdirSync(dir+".module"+"/"+dir+".component");
+}
+
 function service(dir){
     serviceTemplate = "/**\n *\n *\n *\n * @author\n * \@since 0.0.0\n */\n\nimport { Injectable } from '\@angular/core';\n\n@Injectable()\nexport class #MODULEService {\n\n}"
     var dataService = serviceTemplate.replace(/#MODULE/g, dir[0].toUpperCase()+dir.substring(1));
@@ -92,46 +97,52 @@ function createFilesModuleComponent(dir){
     var templateComponentRouting = template.componentRoutingTemplate;
     var templateComponentSpec = template.componentSpecTemplate;
     
-    var _dataComponent = templateComponent.component.replace(/#MODULEComponent/g, dir[0].toUpperCase()+dir.substring(1)+"Component");
+    var _dataComponent = templateComponent.component.replace(/#MODULEComponent/g, dir[0].toUpperCase()+dir.substring(1)+"Component");    
     var dataComponent = _dataComponent.replace(/#MODULE/g, dir);
     
     var _dataComponentRouting = templateComponentRouting.componentRouting.replace(/#MODULEComponent/g, dir[0].toUpperCase()+dir.substring(1)+"Component");
-    var dataComponentRouting = _dataComponentRouting.replace(/#MODULE/g, dir);
+    var __dataComponentRouting = _dataComponentRouting.replace(/#MODULERoutingModule/g, dir[0].toUpperCase()+dir.substring(1)+"RoutingModule");
+    var dataComponentRouting = __dataComponentRouting.replace(/#MODULE/g, dir);
     
     var _dataComponentSpec = templateComponentSpec.componentSpec.replace(/#MODULEComponent\(\)/g, dir[0].toUpperCase()+dir.substring(1)+"Component()");
     var dataComponentSpec = _dataComponentSpec.replace(/#MODULE/g, dir);
-    
-    var dataComponentModule = templateComponentModule.componentModule.replace(/#MODULE/g, dir[0].toUpperCase()+dir.substring(1));    
-    var dataComponentHtml = "<ActionBar title=\"My App\" class=\"action-bar\">\n</ActionBar>\n<StackLayout class=\"page\">\n\n</StackLayout>"
-    var dataComponentIndex = "export * from './"+dir+".component';\nexport * from './"+dir+".routing';\nexport * from './"+dir+".module';"
+        
+    var _dataComponentModule = templateComponentModule.componentModule.replace(/#MODULERoutingModule/g, dir[0].toUpperCase()+dir.substring(1)+"RoutingModule");
+    var __dataComponentModule = _dataComponentModule.replace(/#MODULEComponent/g, dir[0].toUpperCase()+dir.substring(1)+"Component");
+    var dataComponentModule = __dataComponentModule.replace(/#MODULE/g, dir);
 
-    fs.writeFileSync(dir+"/"+dir+".component.css");
-    fs.writeFileSync(dir+"/"+dir+".component.ts", dataComponent);
-    fs.writeFileSync(dir+"/"+dir+".component.html", dataComponentHtml);    
-    fs.writeFileSync(dir+"/"+dir+".module.ts", dataComponentModule);
-    fs.writeFileSync(dir+"/index.ts", dataComponentIndex);
-    fs.writeFileSync(dir+"/"+dir+".routing.html", dataComponentRouting);
+    var dataComponentHtml = "<ActionBar title=\"My App\" class=\"action-bar\">\n</ActionBar>\n<StackLayout class=\"page\">\n\n</StackLayout>"
+    var dataComponentIndex = "export * from './"+dir+".component';\nexport * from './"+dir+".routing.module';\nexport * from './"+dir+".module';"
+    var dataComponentIndexLocal = "export * from './"+dir+".component';\n"
+
+    fs.writeFileSync(dir+".module"+"/"+dir+".component/"+dir+".component.css");
+    fs.writeFileSync(dir+".module"+"/"+dir+".component/"+dir+".component.ts", dataComponent);
+    fs.writeFileSync(dir+".module"+"/"+dir+".component/"+dir+".component.html", dataComponentHtml);
+    fs.writeFileSync(dir+".module"+"/"+dir+".component/"+"index.ts", dataComponentIndexLocal);  
+    fs.writeFileSync(dir+".module"+"/"+dir+".module.ts", dataComponentModule);
+    fs.writeFileSync(dir+".module"+"/index.ts", dataComponentIndex);
+    fs.writeFileSync(dir+".module"+"/"+dir+".routing.module.ts", dataComponentRouting);
     fs.writeFileSync("tests/"+dir+".spec.js", dataComponentSpec);
 }
 
 function createDirectoryComponent(dir){
-    var templateComponent = template.componentTemplate;    
+    var templateComponent = template.componentTemplate;
     var _dataComponent = templateComponent.component.replace(/#MODULEComponent/g, dir[0].toUpperCase()+dir.substring(1)+"Component");
     var dataComponent = _dataComponent.replace(/#MODULE/g, dir); 
    
     var dataComponentHtml = "<ActionBar title=\"My App\" class=\"action-bar\">\n</ActionBar>\n<StackLayout class=\"page\">\n\n</StackLayout>"
     var dataComponentIndex = "export * from './"+dir+".component';"
 
-    fs.writeFileSync(dir+"/"+dir+".component.css");
-    fs.writeFileSync(dir+"/"+dir+".component.ts", dataComponent);
-    fs.writeFileSync(dir+"/"+dir+".component.html", dataComponentHtml);    
-    fs.writeFileSync(dir+"/index.ts", dataComponentIndex);
+    fs.writeFileSync(dir+".component"+"/"+dir+".component.css", "");
+    fs.writeFileSync(dir+".component"+"/"+dir+".component.ts", dataComponent);
+    fs.writeFileSync(dir+".component"+"/"+dir+".component.html", dataComponentHtml);    
+    fs.writeFileSync(dir+".component"+"/index.ts", dataComponentIndex);
     
     if (fs.existsSync("index.ts")){
         var data = fs.readFileSync('index.ts');
-        newData = "export * from './"+dir+";\n"+data;
+        newData = "export * from './"+dir+".component'"+";\n"+data;
         fs.writeFileSync('index.ts', newData);        
-    }  
+    }
 }
 
 function init(){
@@ -158,12 +169,12 @@ function init(){
 }
 
 if(option == "cm"){
-    directory(module);
+    directoryModule(module);
     createFilesModuleComponent(module);
 }
 
 if(option == "c"){
-    directory(module);
+    directory(module+".component");
     createDirectoryComponent(module);
 }
 

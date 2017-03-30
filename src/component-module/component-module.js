@@ -9,11 +9,11 @@ module.exports.componentModule =
 
 import { NgModule } from "@angular/core";
 import { #MODULEComponent } from "./";
-import { SharedModule } from '../shared';
+import { #MODULERoutingModule } from "./#MODULE.routing.module";
 
 @NgModule({
 	imports: [ 
-		SharedModule
+		#MODULERoutingModule
 	],
 	declarations: [
 		#MODULEComponent

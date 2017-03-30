@@ -7,7 +7,7 @@ module.exports.componentSpec =
  * @since 0.0.0
  */
 
-var component = require("../#MODULE/#MODULE.component")
+var component = require("../#MODULE.module/#MODULE.component/#MODULE.component")
 
 describe("A suite", function() {
   it("contains spec with an expectation", function() {
